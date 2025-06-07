@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo-moontech
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: backend-moontech
+    volumes:
+      - ./backend:/app
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+    command: npm run dev
+
+  frontend:
+    build: ./frontend
+    container_name: frontend-moontech
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    command: npm run dev
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
